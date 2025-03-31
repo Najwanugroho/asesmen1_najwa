@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Speed Calculator</string>
     <string name="speed_intro">This app helps you calculate speed based on distance traveled and time taken.</string>
+    <string name="gambar">picture</string>
     <string name="jarak">Distance (km)</string>
     <string name="waktu">Time (hour)</string>
     <string name="hitung">Count</string>
@@ -10,6 +11,6 @@
     <string name="bagikan">Share</string>
     <string name="bagikan_template">Speed: %1$.2f km/h</string>
     <string name="tentang_aplikasi">about the application</string>
-    <string name="copyright">Speed ​​Calculator is an Android application to calculate speed based on distance traveled and time required.  This application is made for Mobile Programming class 1.  Copyright© 2024-2025 Najwa Shaqila Isna Nugroho. All rights reserved.</string>
+    <string name="copyright">Speed Calculator is an Android application to calculate speed based on distance traveled and time required.  This application is made for Mobile Programming class 1.  Copyright© 2024-2025 Najwa Shaqila Isna Nugroho. All rights reserved.</string>
     <string name="kembali">Back</string>
 </resources>

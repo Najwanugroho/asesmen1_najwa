@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +53,8 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
+    var translated by rememberSaveable { mutableStateOf(false) } // Menyimpan status translate
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,11 +63,9 @@ fun MainScreen(navController: NavHostController) {
                         Image(
                             painter = painterResource(id = R.drawable.logo),
                             contentDescription = stringResource(R.string.gambar),
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(end = 8.dp)
+                            modifier = Modifier.size(40.dp).padding(end = 8.dp)
                         )
-                        Text(text = "Kalkulator Kecepatan")
+                        Text(text = if (translated) "Speed Calculator" else "Kalkulator Kecepatan")
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -75,7 +76,7 @@ fun MainScreen(navController: NavHostController) {
                     IconButton(onClick = { navController.navigate(Screen.About.route) }) {
                         Icon(
                             imageVector = Icons.Outlined.Info,
-                            contentDescription = "Tentang Aplikasi",
+                            contentDescription = if (translated) "About App" else "Tentang Aplikasi",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -83,12 +84,12 @@ fun MainScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
-        ScreenContent(Modifier.padding(padding))
+        ScreenContent(Modifier.padding(padding), translated) { translated = it }
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier) {
+fun ScreenContent(modifier: Modifier = Modifier, translated: Boolean, onTranslateChange: (Boolean) -> Unit) {
     var jarak by rememberSaveable { mutableStateOf("") }
     var jarakError by rememberSaveable { mutableStateOf(false) }
 
@@ -96,9 +97,9 @@ fun ScreenContent(modifier: Modifier = Modifier) {
     var waktuError by rememberSaveable { mutableStateOf(false) }
 
     var kecepatan by rememberSaveable { mutableStateOf(0f) }
-    var translated by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -121,7 +122,7 @@ fun ScreenContent(modifier: Modifier = Modifier) {
             },
             isError = jarakError,
             trailingIcon = { IconPicker(jarakError, "km") },
-            supportingText = { ErrorHint(jarakError) },
+            supportingText = { ErrorHint(jarakError, translated) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -138,7 +139,7 @@ fun ScreenContent(modifier: Modifier = Modifier) {
             },
             isError = waktuError,
             trailingIcon = { IconPicker(waktuError, "jam") },
-            supportingText = { ErrorHint(waktuError) },
+            supportingText = { ErrorHint(waktuError, translated) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -187,11 +188,11 @@ fun ScreenContent(modifier: Modifier = Modifier) {
         }
 
         Button(
-            onClick = { translated = !translated },
+            onClick = { onTranslateChange(!translated) },
             modifier = Modifier.padding(top = 8.dp),
             contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
         ) {
-            Text(text = if (translated) "Translate to Indonesian" else "Translate to English")
+            Text(text = if (translated) "Indonesian" else "English")
         }
     }
 }
@@ -206,11 +207,12 @@ fun IconPicker(isError: Boolean, unit: String) {
 }
 
 @Composable
-fun ErrorHint(isError: Boolean) {
+fun ErrorHint(isError: Boolean, translated: Boolean) {
     if (isError) {
-        Text(text = stringResource(R.string.input_invalid))
+        Text(text = if (translated) "Invalid input!" else "Input tidak valid!")
     }
 }
+
 private fun shareData(context: Context, message: String) {
     val shareIntent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
@@ -220,6 +222,7 @@ private fun shareData(context: Context, message: String) {
         context.startActivity(shareIntent)
     }
 }
+
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
